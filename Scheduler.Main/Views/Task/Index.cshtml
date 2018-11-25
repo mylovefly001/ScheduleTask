@@ -1,0 +1,321 @@
+﻿@using Scheduler.Core.Library;
+@{
+ViewData["Title"] = "任务列表";
+Layout = "_Layout";
+}
+<div class="row">
+    <div style="margin-top:10px;" class="fifteen wide column">
+        <button class="ui green mini button" name="btnAdd"><i class="plus icon"></i>添加</button>
+    </div>
+    @if(ViewBag.TaskList.Count==0){
+    <div style="margin-top:10px;" class="fifteen wide column">
+        <div class="ui icon message">
+            <i class="exclamation triangle icon"></i>
+            <div class="content">
+                <div class="header">暂无任务！</div>
+                <p>目前还没有添加任何任务，点击上面的“添加”按钮开始添加</p>
+            </div>
+        </div>
+    </div>
+    }else{
+    <div style="margin-top:10px;" class="fifteen wide column">
+        @foreach(var item in ViewBag.TaskList){
+        var runColor = "green";
+        if(item.Status==0){
+        runColor = "";
+        }
+        <table class="ui @runColor celled table" bind-jobId="@item.Id">
+            <tbody>
+            <tr>
+                <td colspan="2" style="padding:0;">
+                    <table border="0" cellspacing="0" cellpadding="0" style="width:100%;">
+                        <tr>
+                            <td style="width:100px;">
+                                @if(item.Status==0){
+                                <div class="ui ribbon label">@item.GroupName</div>
+                                }else{
+                                <div class="ui green ribbon label">@item.GroupName</div>
+                                }
+                            </td>
+                            <td style="font-weight:normal;padding:0;border-left:none;">@item.Id：@item.Name</td>
+                            <td style="width:80px;text-align:right;">
+                                <div class="ui mini icon buttons" bind-jobId="@item.Id">
+                                    @if(item.Status==1){
+                                    <button title="手动运行一次" class="ui button" onclick="return run(this);">
+                                        <i class='icon paper plane outline'></i>
+                                    </button>
+                                    <div class="or"></div>
+                                    }
+                                    <button title="查看日志" class="ui button" onclick="return logger(this);">
+                                        <i class='icon tasks'></i>
+                                    </button>
+                                </div>
+                            </td>
+                            <td style="width:120px;text-align:center;border-left:none;">
+                                <div class="ui mini icon buttons" bind-jobId="@item.Id">
+                                    @if(item.Status==0){
+                                    <button title="编辑" class="ui green button" onclick="return edit(this);"><i class='icon edit'></i></button>
+                                    <div class="or"></div>
+                                    }
+                                    <button title="删除" class="ui button" onclick="return del(this);"><i class='icon trash'></i></button>
+                                    @if (Auth.IsAdmin){
+                                    <div class="or"></div>
+                                    if(item.Status==0){
+                                    <button title="启用" class="ui green button" onclick="return status(this,1);"><i class='icon check'></i></button>
+                                    }else{
+                                    <button title="禁用" class="ui orange button" onclick="return status(this,0);"><i class='icon ban'></i></button>
+                                    }
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:100px;">
+                    <div style="text-align:center;" bind-triggerId="@item.Id-@item.TriggerId">
+                        @if(item.Status==0){
+                        <span><i style="color:#666;" title="未运行" class="icon huge play"></i></span>
+                        }else{
+                        <span><i title="运行中" style="cursor:pointer;" class="icon green huge play"></i></span>
+                        }
+                    </div>
+                </td>
+                <td style="padding:0;">
+                    <table border="0" cellspacing="0" cellpadding="0" style="width:100%;" bind-triggerId="@item.Id-@item.TriggerId">
+                        <tbody>
+                        <tr>
+                            <td>
+                                <span style="color:#666;">触发器名称：</span>
+                                <span style="font-weight:500;">@item.TriggerDesc</span>
+                            </td>
+                            <td>
+                                <span style="color:#666;"><i class='icon user md'></i>添加者：</span>
+                                <span style="font-weight:500;">@item.UserName</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span style="color:#666;">触发器规则：</span>
+                                <span style="word-spacing:20px;">@item.TriggerValue</span>
+                            </td>
+                            <td>
+                                <span style="color:#666;"><i class='icon calendar plus outline'></i>添加时间：</span>
+                                <span>@item.CreatedTime</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            @if(item.Status==0){
+                            <td colspan="2">
+                                <span style="color:#666;"><i class='icon info'></i>描述：</span>
+                                <span>@item.Description</span>
+                            </td>
+                            }else{
+                            <td>
+                                <span style="color:#666;"><i class='icon angle up'></i>上次运行：</span>
+                                <span></span>
+                            </td>
+                            <td>
+                                <span style="color:#666;"><i class='icon angle down'></i>下次运行：</span>
+                                <span></span>
+                            </td>
+                            }
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            @if(item.Status==1){
+            <tr>
+                <td colspan="3" style="padding:0;">
+                    <div style="height:2px;" class="ui bottom attached progress" data-percent="100">
+                        <div class="bar"></div>
+                    </div>
+                    <script>
+                        $(function () {
+                            $(".ui.progress").progress();
+                        });
+                    </script>
+                </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+        }
+
+        <script src="/js/signalr.js"></script>
+        <script>
+            var resumeStr = "<span onmouseenter='return mouseenter(this);' onclick=\"return pause(this);\"><i title=\"点击暂停任务\" style=\"cursor:pointer;\" class=\"icon green huge play\"></i></span>";
+            var pauseStr = "<span onmouseenter='return mouseenter(this);' onclick=\"return resume(this);\"><i title=\"点击恢复运行\" style=\"cursor:pointer;\" class=\"icon green huge stop\"></i></span>";
+            $(function () {
+                initWebSocket();
+                getJobList();
+            });
+
+            function mouseenter(obj) {
+                $(obj).transition('pulse');
+            }
+
+            function initWebSocket() {
+                var conn = new signalR.HubConnectionBuilder().withUrl("/scheduler").build();
+                conn.start().catch(function (err) {
+                    console.error(err.toString());
+                });
+                conn.on("ReceiveMessage", function (message) {
+                    var json = JSON.parse(message);
+                    var type = parseInt(json["type"]);
+                    var jobTable = $("table[bind-jobId='" + json["jobKey"] + "']");
+                    var triggerTable = jobTable.find("table[bind-triggerId='" + json["triggerKey"] + "']");
+                    if (type == 1) {
+                        var preRunTime = Tools.isEmpty(json["triggerPreTime"]) ? "" : json["triggerPreTime"].replace(/-/g, "/");
+                        var nextRunTime = Tools.isEmpty(json["triggerNextTime"]) ? "" : json["triggerNextTime"].replace(/-/g, "/");
+                        triggerTable.find("tbody>tr:last>td:first>span:last").html(preRunTime);
+                        triggerTable.find("tbody>tr:last>td:last>span:last").html(nextRunTime);
+                    } else if (type == 2) {
+                        var percent = parseInt(json["percent"]);
+                        jobTable.find("tbody>tr:last>td>div").progress("set percent", percent);
+                    }
+
+                    //triggerTable.find("tbody>tr:first>td:last>div").append("<p style='margin-bottom:5px;'><span style='color:#666;'>" + Tools.nowDateTime() + "</span>：" + json["result"] + "</p>");
+                });
+            }
+
+            function getJobList() {
+                var loading = layer.load(1);
+                $.getJSON("/Index/GetJobList", function (rs) {
+                    if (rs["code"] > 0) {
+                        layer.msg(rs["msg"], {icon: 2});
+                        return false;
+                    }
+                    $.each(rs["data"], function (key, job) {
+                        var jobTable = $("table[bind-jobId='" + key + "']");
+                        $.each(job["detailTriggers"], function (i, v) {
+                            jobTable.children("tbody").children("tr:eq(1)").find("td:first>div").html(parseInt(v["status"]) == 0 ? resumeStr : pauseStr);
+                            var triggerTable = jobTable.find("table[bind-triggerId='" + i + "']");
+                            var preRunTime = Tools.isEmpty(v["preRunTime"]) ? "" : v["preRunTime"].replace(/-/g, "/");
+                            triggerTable.find("tbody>tr:last>td:first>span:last").html(preRunTime);
+                            var nextRunTime = Tools.isEmpty(v["nextRunTime"]) ? "" : v["nextRunTime"].replace(/-/g, "/");
+                            triggerTable.find("tbody>tr:last>td:last>span:last").html(nextRunTime);
+                        });
+                    });
+                    layer.close(loading);
+                });
+            }
+
+            function logger(obj) {
+                var id = $(obj).closest("div").attr("bind-jobId");
+                layer.open({
+                    type: 2,
+                    title: "<div><i class=\"icon history\"></i>查看日志</div>",
+                    skin: 'layui-layer-lan',
+                    area: ['85%', '85%'], //宽高
+                    content: ["/Task/Logger?id=" + id]
+                });
+            }
+
+            function pause(obj) {
+                var id = $(obj).closest("div").attr("bind-triggerId");
+                var taskId = $(obj).closest("table").attr("bind-jobId");
+                var that = obj;
+                layer.confirm("确认暂停任务？", {icon: 3, title: '提示'}, function (index) {
+                    layer.close(index);
+                    $.post("/Task/PauseDo", {id: id, taskId: taskId}, function (rs) {
+                        if (rs["code"] > 0) {
+                            layer.msg(rs["msg"], {icon: 2});
+                        } else {
+                            $(obj).closest("div").html(pauseStr);
+                        }
+                        return false;
+                    });
+                });
+            }
+
+            function resume(obj) {
+                var id = $(obj).closest("div").attr("bind-triggerId");
+                var taskId = $(obj).closest("table").attr("bind-jobId");
+                layer.confirm("确认恢复运行任务？", {icon: 3, title: '提示'}, function (index) {
+                    layer.close(index);
+                    $.post("/Task/ResumeDo", {id: id, taskId: taskId}, function (rs) {
+                        if (rs["code"] > 0) {
+                            layer.msg(rs["msg"], {icon: 2});
+                        } else {
+                            $(obj).closest("div").html(resumeStr);
+                        }
+                    });
+                });
+            }
+
+            function run(obj) {
+                var id = $(obj).closest("div").attr("bind-jobId");
+                layer.confirm("确认此操作？", {icon: 3, title: '提示'}, function (index) {
+                    layer.close(index);
+                    $.post("/Task/RunDo", {id: id}, function (rs) {
+                        if (rs["code"] > 0) {
+                            layer.msg(rs["msg"], {icon: 2});
+                        } else {
+                            layer.msg("运行成功", {icon: 1});
+                        }
+                        return false;
+                    });
+                });
+            }
+
+
+            function status(obj, val) {
+                var id = $(obj).closest("div").attr("bind-jobId");
+                layer.confirm("确认此操作？", {icon: 3, title: '提示'}, function (index) {
+                    layer.close(index);
+                    $.post("/Task/StatusDo", {id: id, status: val}, function (rs) {
+                        if (rs["code"] > 0) {
+                            layer.msg(rs["msg"], {icon: 2});
+                        } else {
+                            window.location.reload();
+                        }
+                        return false;
+                    });
+                });
+            }
+
+            function edit(obj) {
+                var id = $(obj).closest("div").attr("bind-jobId");
+                layer.open({
+                    type: 2,
+                    title: "<div><i class=\"icon history\"></i>编辑任务</div>",
+                    skin: 'layui-layer-lan',
+                    area: ['800px', '470px'], //宽高
+                    content: ["/Task/Edit?id=" + id]
+                });
+            }
+
+            function del(obj) {
+                var id = $(obj).closest("div").attr("bind-jobId");
+                layer.confirm("确认删除此项？", {icon: 3, title: '提示'}, function (index) {
+                    layer.close(index);
+                    $.post("/Task/DelDo", {id: id}, function (rs) {
+                        if (rs["code"] > 0) {
+                            layer.msg(rs["msg"], {icon: 2});
+                        } else {
+                            window.location.reload();
+                        }
+                        return false;
+                    });
+                });
+            }
+        </script>
+    </div>
+    }
+</div>
+<script>
+    $(function () {
+        $("button[name='btnAdd']").click(function () {
+            layer.open({
+                type: 2,
+                title: "<div><i class='icon history'></i>添加任务</div>",
+                skin: 'layui-layer-lan',
+                area: ['800px', '470px'], //宽高
+                content: ["/Task/Add"]
+            });
+        });
+    });
+</script>

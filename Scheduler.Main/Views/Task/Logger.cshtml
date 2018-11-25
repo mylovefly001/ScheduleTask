@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width"/>
+    <title>Logger</title>
+    <link href="/lib/semantic/semantic.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/lib/semantic/semantic.min.js"></script>
+    <script src="/js/tools.js"></script>
+</head>
+
+<body>
+<div class="ui fluid container">
+    <div class="row" style="padding:15px;">
+        <div class="column">
+            <table class="ui selectable green striped celled table">
+                <thead>
+                <tr>
+                    <th style="width: 50px;">ID</th>
+                    <th>返回数据</th>
+                    <th style="width: 80px;">状态</th>
+                    <th style="width: 110px;">运行时长(秒)</th>
+                    <th style="width: 180px;">运行时间</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    var dialog = parent.layer.getFrameIndex(window.name);
+    var id = @Context.Request.Query["id"].FirstOrDefault();
+    var currentPage = 1;
+    $(function () {
+        GetTableList(currentPage);
+
+    });
+
+    function GetTableList(page) {
+        currentPage = page;
+        Tools.getTableList({
+            "funcName": "GetTableList",
+            "layer": parent.layer,
+            "container": $(".ui.table"),
+            "ajaxUrl": "/Task/GetLogger",
+            "isPage": true,
+            "ajaxParam": {"page": currentPage, "id": id},
+            "headPage": false,
+            "columns": [
+                {"fields": "id"},
+                {
+                    "fields": "result", "event": function (val) {
+                        var width = $("table>thead>tr>th:eq(1)").width();
+                        return "<div title='" + val + "' style='width:" + width + "px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;word-wrap:break-word;'>" + val + "</div>";
+                    }
+                },
+                {
+                    "fields": "status", "event": function (val) {
+
+                        if (parseInt(val) == 1) {
+                            return "<label class='ui green label' style='word-spacing:20px;'>成功</label>";
+                        } else {
+                            return "<label class='ui label' style='word-spacing:20px;'>失败</label>";
+                        }
+                    }
+                },
+                {
+                    "fields": "runTime", "event": function (val) {
+                        return val.toFixed(4);
+                    }
+                },
+                {"fields": "createdTime"}
+            ]
+        });
+    }
+</script>
+</body>
+</html>

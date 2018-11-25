@@ -1,0 +1,79 @@
+﻿@using Scheduler.Core.Library;
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width"/>
+    <title>@ViewData["Title"]</title>
+    <link href="/lib/semantic/semantic.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/lib/semantic/semantic.min.js"></script>
+    <script src="/lib/layer/layer.js"></script>
+    <script src="/js/tools.js"></script>
+</head>
+
+<body>
+<div class="ui fluid container">
+    <div class="ui centered grid">
+        <div class="centered row">
+            <div class="twelve wide column">
+                <div class="ui top fixed menu" style="background: #24292E;">
+                    <div class="item">
+                        <img src="/img/logo.png" style="width: 35px; height: 35px;" alt="Logo" />
+                    </div>
+                    <a class="icon item" href="/"><i class="home icon">首页</i></a>
+                    <a class="icon item" href="/Task"><i class="tasks icon">&nbsp;任务列表</i></a>
+                    <a class="icon item" href="/Trigger"><i class="history icon">&nbsp;触发器列表</i></a>
+                    @if (Auth.IsAdmin)
+                    {
+                        <a class="icon item" href="/Group"><i class="table icon">&nbsp;任务组列表</i></a>
+                        <a class="icon item" href="/User"><i class="user icon">&nbsp;用户列表</i></a>
+                    }
+                    else
+                    {
+                        <a class="icon item" href="/User/Info"><i class="user icon">&nbsp;用户信息</i></a>
+                    }
+                    <div class="right menu">
+                        <a class="ui icon item" title="退出" onclick="return loginOut();"><i class="sign-out icon">&nbsp;@Auth.Info.UserName</i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="height: 30px;"></div>
+        @RenderBody()
+        <div class="row">
+            <div class="twelve wide column"></div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        let menu = $(".ui.top.fixed.menu");
+        menu.children("a").removeClass("active");
+        menu.children("a[href='@Context.Request.Path']").addClass("active");
+    });
+
+    function loginOut() {
+        layer.confirm("确认退出登录？", {
+                icon: 3,
+                title: '提示'
+            },
+            function (index) {
+                $.post("/Login/Do", {cmd: 0}, function (rs) {
+                    layer.close(index);
+                    if (rs["code"] > 0) {
+                        layer.msg(rs["msg"], {icon: 2});
+                        return false;
+                    }
+                    window.location.href = "/Login";
+                });
+
+            });
+    }
+</script>
+</body>
+
+</html>

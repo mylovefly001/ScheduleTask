@@ -1,0 +1,120 @@
+﻿@{
+ViewData["Title"] = "用户列表";
+Layout = "_Layout";
+
+}
+<div class="row">
+    <div style="margin-top:10px;" class="fifteen wide column">
+        <button class="ui green mini button" name="btnAdd"><i class="plus icon"></i>添加</button>
+    </div>
+    <div style="margin-top:10px;" class="fifteen wide column">
+        <table class="ui green selectable striped celled table">
+            <thead>
+            <tr>
+                <th style="width: 75px;">ID</th>
+                <th>用户名</th>
+                <th style="width: 120px;">等级</th>
+                <th style="width: 100px;">用户状态</th>
+                <th style="width: 180px;">添加时间</th>
+                <th style="width: 100px;">操作</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<script>
+    var currentPage = 1;
+    $(function () {
+        GetTableList(currentPage);
+        $("button[name='btnAdd']").click(function () {
+            layer.open({
+                type: 2,
+                title: "<div><i class=\"icon user\"></i>添加用户</div>",
+                skin: 'layui-layer-lan',
+                area: ['800px', '375px'], //宽高
+                content: ["/User/Add"]
+            });
+        });
+    });
+
+    /**
+     * 获取数据列表
+     */
+    function GetTableList(page) {
+        currentPage = page;
+        Tools.getTableList({
+            "funcName": "GetTableList",
+            "layer": layer,
+            "container": $(".ui.table"),
+            "ajaxUrl": "/User/GetList",
+            "isPage": true,
+            "ajaxParam": {"page": currentPage},
+            "headPage": false,
+            "columns": [
+                {"fields": "id"},
+                {"fields": "userName"},
+                {
+                    "fields": "level", "event": function (val) {
+                        let str = "<i class='icon user'></i>普通用户";
+                        if (parseInt(val) == 2) {
+                            str = "<i class='icon user plus'></i>管理员";
+                        }
+                        return str;
+                    }
+                },
+                {
+                    "fields": "status", "event": function (val) {
+                        let str = "<label class='ui label'>禁用</label>";
+                        if (parseInt(val) == 1) {
+                            str = "<label class='ui basic label'>启用</label>";
+                        }
+                        return str;
+                    }
+                },
+                {"fields": "createdTime"},
+                {
+                    "fields": "id", "event": function (val) {
+                        let str = "<div class='ui mini icon buttons' bind-id='" + val + "'>";
+                        str += "<button title='编辑' class='ui green button' onClick='return edit(this);'><i class='icon edit'></i></button>";
+                        str += "<div class='or'></div>";
+                        str += "<button title='删除' class='ui button' onClick='return del(this);'><i class='icon trash'></i></button>";
+                        return str;
+                    }
+                }
+            ]
+        });
+    }
+
+    /**
+     * 编辑用户
+     */
+    function edit(obj) {
+        var id = $(obj).closest("div").attr("bind-id");
+        layer.open({
+            type: 2,
+            title: "<div><i class=\"icon user\"></i>编辑用户</div>",
+            skin: 'layui-layer-lan',
+            area: ['800px', '375px'], //宽高
+            content: ["/User/Edit?id=" + id]
+        });
+    }
+
+    /**
+     * 删除用户
+     */
+    function del(obj) {
+        var id = $(obj).closest("div").attr("bind-id");
+        layer.confirm("确认删除此项？", {icon: 3, title: '提示'}, function (index) {
+            layer.close(index);
+            $.post("/User/DelDo", {id: id}, function (rs) {
+                if (rs["code"] > 0) {
+                    layer.msg(rs["msg"], {icon: 2});
+                } else {
+                    GetTableList(1);
+                }
+                return false;
+            });
+        });
+    }
+</script>

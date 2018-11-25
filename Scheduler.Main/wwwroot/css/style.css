@@ -1,0 +1,27 @@
+﻿.ui.menu > .item {
+    color: #FFF;
+    font-size: 14px;
+    border-top: solid 2px transparent;
+}
+
+.ui.menu > .active.item {
+    color: #00C6F7;
+    border-top: solid 2px #00C6F7;
+}
+
+.ui.menu > a.active.item:hover {
+    color: #00C6F7;
+}
+
+.ui.menu > a.item:hover {
+    color: #00C6F7;
+    border-top: solid 2px #00C6F7;
+}
+
+.ui.menu > .right.menu > a.item {
+    color: #FFF;
+}
+
+.ui.menu > .right.menu > a.item:hover {
+    color: #00C6F7;
+}

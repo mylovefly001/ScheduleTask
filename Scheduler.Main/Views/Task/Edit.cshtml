@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width"/>
+    <title>Edit</title>
+    <link href="/lib/semantic/semantic.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/lib/semantic/semantic.min.js"></script>
+    <script src="/js/tools.js"></script>
+</head>
+
+<body>
+<div class="ui fluid container">
+    <div class="row" style="padding:15px;">
+        <div class="column">
+            <div class="ui form" id="form1">
+                <div class="field">
+                    <label>任务名称：</label>
+                    <input type="text" name="inputName" value="@ViewBag.TaskInfo.Name">
+                </div>
+                <div class="two fields">
+                    <div class="field">
+                        <label>触发器列表：</label>
+                        <select name="selectTrigger" class="ui fluid dropdown">
+                            <option value="0">选择一个触发器</option>
+                            @foreach(var item in ViewBag.TriggerList){
+                            <option bind-rule="@item.Value" value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="disabled field">
+                        <label>触发器规则：</label>
+                        <input type="text" name="inputCronRule" value="@ViewBag.TaskInfo.TriggerValue">
+                    </div>
+                </div>
+                <div class="two fields">
+                    <div class="field">
+                        <label>任务类型：</label>
+                        <select name="selectType" class="ui fluid dropdown">
+                            <option value="1">命令行运行</option>
+                            <option value="2">Curl调用</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>任务值：</label>
+                        <input type="text" name="inputValue" value="@ViewBag.TaskInfo.Value">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>任务组列表：</label>
+                    <select name="selectGroup" class="ui fluid dropdown">
+                        @foreach(var item in ViewBag.GroupList){
+                        <option value="@item.Id">@item.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="field">
+                    <label>任务描述：</label>
+                    <textarea rows="3" name="inputDescription">@ViewBag.TaskInfo.Description</textarea>
+                </div>
+                <input type="hidden" name="inputId" value="@ViewBag.TaskInfo.Id">
+                <button class="ui fluid blue submit button"><i class="save icon"></i>保存</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    var dialog = parent.layer.getFrameIndex(window.name);
+    $(function () {
+        $("select[name='selectType']").dropdown("set selected", "@ViewBag.TaskInfo.Type");
+        $("select[name='selectGroup']").dropdown("set selected", "@ViewBag.TaskInfo.GroupId");
+        $("select[name='selectTrigger']").dropdown({
+            onChange: function (val, text, $choice) {
+                if (parseInt(val) > 0) {
+                    var rule = $("select[name='selectTrigger']").find("option[value='" + val + "']");
+                    $("input[name='inputCronRule']").val(rule.attr("bind-rule"));
+                } else {
+                    $("input[name='inputCronRule']").val("");
+                }
+            }
+        });
+        $("#form1").form({
+            fields: {
+                inputName: {
+                    identifier: "inputName",
+                    rules: [{
+                        type: "empty",
+                        prompt: "任务名称不得为空"
+                    }]
+                },
+                inputCronRule: {
+                    identifier: "inputCronRule",
+                    rules: [{
+                        type: "empty",
+                        prompt: "选择一个触发器"
+                    }]
+                },
+                inputValue: {
+                    identifier: "inputValue",
+                    rules: [{
+                        type: "empty",
+                        prompt: "任务值不得为空"
+                    }]
+                }
+            },
+            inline: true,
+            onSuccess: function (event, fields) {
+                var loading = parent.layer.load(1);
+                $.post("/Task/EditDo", fields, function (data) {
+                    parent.layer.close(loading);
+                    if (data["code"] > 0) {
+                        parent.layer.msg(data["msg"], {icon: 2});
+                        return false;
+                    }
+                    parent.window.location.reload();
+                });
+            },
+            onValid: function () {
+                parent.layer.iframeAuto(dialog);
+            },
+            onInvalid: function () {
+                parent.layer.iframeAuto(dialog);
+            }
+        });
+    });
+</script>
+</body>
+</html>

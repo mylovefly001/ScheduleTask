@@ -1,0 +1,98 @@
+﻿@{
+ViewData["Title"] = "触发器列表";
+Layout = "_Layout";
+}
+<div class="row">
+    <div style="margin-top:10px;" class="fifteen wide column">
+        <button class="ui green mini button" name="btnAdd"><i class="plus icon"></i>添加</button>
+    </div>
+    <div style="margin-top:10px;" class="fifteen wide column">
+        <table class="ui selectable green striped celled table">
+            <thead>
+            <tr>
+                <th style="width: 75px;">ID</th>
+                <th>名称</th>
+                <th style="width: 300px;">规则</th>
+                <th style="width: 180px;">添加者</th>
+                <th style="width: 200px;">添加时间</th>
+                <th style="width: 100px;">操作</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<script>
+    var currentPage = 1;
+    $(function () {
+        GetTableList(currentPage);
+        $("button[name='btnAdd']").click(function () {
+            layer.open({
+                type: 2,
+                title: "<div><i class='icon history'></i>添加触发器</div>",
+                skin: 'layui-layer-lan',
+                area: ['800px', '500px'], //宽高
+                content: ["/Trigger/Add"]
+            });
+        });
+    });
+
+    function GetTableList(page) {
+        currentPage = page;
+        Tools.getTableList({
+            "funcName": "GetTableList",
+            "layer": layer,
+            "container": $(".ui.table"),
+            "ajaxUrl": "/Trigger/GetList",
+            "isPage": true,
+            "ajaxParam": {"page": currentPage},
+            "headPage": false,
+            "columns": [
+                {"fields": "id"},
+                {"fields": "name"},
+                {
+                    "fields": "value", "event": function (val) {
+                        return "<label class='ui label' style='word-spacing:20px;'>" + val + "</label>";
+                    }
+                },
+                {"fields": "userName"},
+                {"fields": "createdTime"},
+                {
+                    "fields": "id", "event": function (val) {
+                        let str = "<div class='ui mini icon buttons' bind-id='" + val + "'>";
+                        str += "<button title='编辑' class='ui green button' onClick='return edit(this);'><i class='icon edit'></i></button>";
+                        str += "<div class='or'></div>";
+                        str += "<button title='删除' class='ui button' onClick='return del(this);'><i class='icon trash'></i></button>";
+                        return str;
+                    }
+                }
+            ]
+        });
+    }
+
+    function edit(obj) {
+        var id = $(obj).closest("div").attr("bind-id");
+        layer.open({
+            type: 2,
+            title: "<div><i class=\"icon history\"></i>编辑触发器</div>",
+            skin: 'layui-layer-lan',
+            area: ['800px', '500px'], //宽高
+            content: ["/Trigger/Edit?id=" + id]
+        });
+    }
+
+    function del(obj) {
+        var id = $(obj).closest("div").attr("bind-id");
+        layer.confirm("确认删除此项？", {icon: 3, title: '提示'}, function (index) {
+            layer.close(index);
+            $.post("/Trigger/DelDo", {id: id}, function (rs) {
+                if (rs["code"] > 0) {
+                    layer.msg(rs["msg"], {icon: 2});
+                } else {
+                    GetTableList(1);
+                }
+                return false;
+            });
+        });
+    }
+</script>

@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width"/>
+    <title>Edit</title>
+    <link href="/lib/semantic/semantic.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/lib/semantic/semantic.min.js"></script>
+    <script src="/js/jquery.sha1.js"></script>
+    <script src="/js/tools.js"></script>
+</head>
+
+<body>
+<div class="ui fluid container">
+    <div class="row" style="padding:15px;">
+        <div class="column">
+            <div class="ui form" id="form1">
+                <div class="two fields">
+                    <div class="field">
+                        <label>用户名：</label>
+                        <input type="text" name="inputName" value="@ViewBag.UserInfo.UserName">
+                    </div>
+                    <div class="field">
+                        <label>密码：<span style="color:#999;font-weight:normal;">(最长15位,留空不改变)</span></label>
+                        <input type="password" maxlength="15" name="inputPass">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>用户等级：</label>
+                    <select name="selectLevel" class="ui fluid dropdown">
+                        <option value="1">普通用户</option>
+                        <option value="2">管理员</option>
+                    </select>
+                </div>
+                <div class="two fields">
+                    <div class="field">
+                        <label>邮箱地址：</label>
+                        <input type="text" name="inputEmail" value="@ViewBag.UserInfo.Email">
+                    </div>
+                    <div class="field">
+                        <label>手机号：</label>
+                        <input type="text" maxlength="11" name="inputMobile" value="@ViewBag.UserInfo.Mobile">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui toggle checkbox" name="cboxStatus">
+                        <input type="checkbox" name="inputStatus" class="hidden">
+                        <label>启用/停用</label>
+                    </div>
+                </div>
+                <input type="hidden" name="inputId" value="@ViewBag.UserInfo.Id">
+                <button class="ui fluid blue submit button"><i class="save icon"></i>保存</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    var dialog = parent.layer.getFrameIndex(window.name);
+    $(function () {
+        $("select[name='selectLevel']").dropdown("set selected", "@ViewBag.UserInfo.Level");
+        var status = parseInt("@ViewBag.UserInfo.Status") == 1 ? "check" : "uncheck";
+        $("div[name='cboxStatus']").checkbox(status);
+        $("#form1").form({
+            fields: {
+                inputName: {
+                    identifier: "inputName",
+                    rules: [{type: "empty", prompt: "用户名不得为空"}]
+                },
+                inputEmail: {
+                    identifier: "inputEmail",
+                    rules: [{type: "email", prompt: "邮箱格式不正确"}]
+                }
+            },
+            inline: true,
+            onSuccess: function (event, fields) {
+                var loading = parent.layer.load(1);
+                var passWord = $("input[name='inputPass']").val();
+                if (!Tools.isEmpty(passWord)) {
+                    fields['inputPass'] = $.encoding.digests.hexSha1Str(passWord);
+                }
+                $.post("/User/EditDo", fields, function (data) {
+                    parent.layer.close(loading);
+                    if (data["code"] > 0) {
+                        parent.layer.msg(data["msg"], {icon: 2});
+                        return false;
+                    }
+                    parent.layer.close(dialog);
+                    parent.window.GetTableList(parent.window.currentPage);
+                });
+            },
+            onValid: function () {
+                parent.layer.iframeAuto(dialog);
+            },
+            onInvalid: function () {
+                parent.layer.iframeAuto(dialog);
+            }
+        });
+    });
+</script>
+</body>
+</html>

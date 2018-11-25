@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width"/>
+    <title>Add</title>
+    <link href="/lib/semantic/semantic.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/lib/semantic/semantic.min.js"></script>
+    <script src="/js/tools.js"></script>
+</head>
+
+<body>
+<div class="ui fluid container">
+    <div class="row" style="padding:15px;">
+        <div class="column">
+            <div class="ui form" id="form1">
+                <div class="field">
+                    <label>触发器名称：</label>
+                    <input type="text" name="inputName">
+                </div>
+                @{await Html.RenderPartialAsync("_Crontab");}
+                <button class="ui fluid blue submit button"><i class="plus icon"></i>添加</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="/js/crontab.js"></script>
+<script>
+    var dialog = parent.layer.getFrameIndex(window.name);
+    $(function () {
+        $("#form1").form({
+            fields: {
+                inputName: {
+                    identifier: "inputName",
+                    rules: [{
+                        type: "empty",
+                        prompt: "触发器名称不得为空"
+                    }]
+                }
+            },
+            inline: true,
+            onSuccess: function (event, fields) {
+                var loading = parent.layer.load(1);
+                $.post("/Trigger/AddDo", fields, function (data) {
+                    parent.layer.close(loading);
+                    if (data["code"] > 0) {
+                        parent.layer.msg(data["msg"], {icon: 2});
+                        return false;
+                    }
+                    parent.window.location.reload();
+                });
+            },
+            onValid: function () {
+                parent.layer.iframeAuto(dialog);
+            },
+            onInvalid: function () {
+                parent.layer.iframeAuto(dialog);
+            }
+        });
+    });
+</script>
+</body>
+</html>

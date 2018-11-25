@@ -1,0 +1,409 @@
+﻿<div class="field" style="margin-bottom:0;">
+    <label>运行方式：</label>
+    <div class="ui tabular menu" name="tab-cron-regex">
+        <div class="item active" data-tab="tab-second">秒</div>
+        <div class="item" data-tab="tab-minute">分</div>
+        <div class="item" data-tab="tab-hour">时</div>
+        <div class="item" data-tab="tab-day">日</div>
+        <div class="item" data-tab="tab-month">月</div>
+        <div class="item" data-tab="tab-week">周</div>
+        <div class="item" data-tab="tab-year">年（可选）</div>
+    </div>
+</div>
+<div class="field" style="padding:0 10px;border:solid 1px #DEDEDE;border-top:none;">
+    <div class="ui tab active" data-tab="tab-second">
+        <div class="grouped fields">
+            <div class="field" style="margin-top:0;padding-top:0.5em;">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioSecond" value="1" checked="checked">
+                    <label>每秒钟运行</label>
+                </div>
+                <div bind-value="1" style="margin:10px 0 0 0;"></div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioSecond" value="2">
+                    <label>在指定的秒数之间运行</label>
+                </div>
+                <div bind-value="2" style="line-height:38px;margin:10px 0 20px 22px;">
+                    <span style="margin:0 5px;">从</span>
+                    <input type="number" style="width:80px;" min="1" max="58" name="inputMinSecond" value="1"
+                        placeholder="开始秒">
+                    <span style="margin:0 5px;">---</span>
+                    <input type="number" style="width:80px;" min="2" max="59" name="inputMaxSecond" value="2"
+                        placeholder="结束秒">
+                    <span style="margin:0 5px;">秒钟执行</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioSecond" value="3">
+                    <label>在指定的秒数循环执行</label>
+                </div>
+                <div bind-value="3" style="line-height:38px;margin:10px 0 20px 22px;">
+                    <span style="margin:0 5px;">从</span>
+                    <input type="number" style="width:80px;" min="0" max="59" name="inputStartSecond" value="0"
+                        placeholder="开始秒">
+                    <span style="margin:0 5px;">秒开始，每</span>
+                    <input type="number" style="width:80px;" min="1" max="59" name="inputEndSecond" value="1"
+                        placeholder="结束秒">
+                    <span style="margin:0 5px;">秒钟执行一次</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioSecond" value="4">
+                    <label>选择需要执行的秒数</label>
+                </div>
+                <div bind-value="4" style="margin:10px 0 20px 22px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="ui tab" data-tab="tab-minute">
+        <div class="grouped fields">
+            <div class="field" style="margin-top:0;padding-top:0.5em;">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioMinute" value="1" checked="checked">
+                    <label>每分钟运行</label>
+                </div>
+                <div bind-value="1" style="margin:10px 0 0 0;"></div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioMinute" value="2">
+                    <label>在指定的分钟之间运行</label>
+                </div>
+                <div bind-value="2" style="line-height:38px;margin:10px 0 20px 22px;">
+                    <span style="margin:0 5px;">从</span>
+                    <input type="number" style="width:80px;" min="1" max="58" name="inputMinMinute" value="1"
+                        placeholder="开始分">
+                    <span style="margin:0 5px;">---</span>
+                    <input type="number" style="width:80px;" min="2" max="59" name="inputMaxMinute" value="2"
+                        placeholder="结束分">
+                    <span style="margin:0 5px;">分钟执行</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioMinute" value="3">
+                    <label>在指定的分钟循环执行</label>
+                </div>
+                <div bind-value="3" style="line-height:38px;margin:10px 0 20px 22px;">
+                    <span style="margin:0 5px;">从</span>
+                    <input type="number" style="width:80px;" min="0" max="59" name="inputStartMinute" value="0"
+                        placeholder="开始分">
+                    <span style="margin:0 5px;">分开始，每</span>
+                    <input type="number" style="width:80px;" min="1" max="59" name="inputEndMinute" value="1"
+                        placeholder="结束分">
+                    <span style="margin:0 5px;">分钟执行一次</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioMinute" value="4">
+                    <label>选择需要执行的分钟</label>
+                </div>
+                <div bind-value="4" style="margin:10px 0 20px 22px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="ui tab" data-tab="tab-hour">
+        <div class="grouped fields">
+            <div class="field" style="margin-top:0;padding-top:0.5em;">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioHour" value="1" checked="checked">
+                    <label>每小时运行</label>
+                </div>
+                <div bind-value="1" style="margin:10px 0 0 0;"></div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioHour" value="2">
+                    <label>在指定的小时之间运行</label>
+                </div>
+                <div bind-value="2" style="line-height:38px;margin:10px 0 20px 22px;">
+                    <span style="margin:0 5px;">从</span>
+                    <input type="number" style="width:80px;" min="0" max="23" name="inputMinHour" value="0" placeholder="开始时">
+                    <span style="margin:0 5px;">---</span>
+                    <input type="number" style="width:80px;" min="2" max="23" name="inputMaxHour" value="2" placeholder="结束时">
+                    <span style="margin:0 5px;">小时执行</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioHour" value="3">
+                    <label>在指定的小时循环执行</label>
+                </div>
+                <div bind-value="3" style="line-height:38px;margin:10px 0 20px 22px;">
+                    <span style="margin:0 5px;">从</span>
+                    <input type="number" style="width:80px;" min="0" max="23" name="inputStartHour" value="0"
+                        placeholder="开始时">
+                    <span style="margin:0 5px;">时开始，每</span>
+                    <input type="number" style="width:80px;" min="1" max="23" name="inputEndHour" value="1" placeholder="结束时">
+                    <span style="margin:0 5px;">小时执行一次</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioHour" value="4">
+                    <label>选择需要执行的小时</label>
+                </div>
+                <div bind-value="4" style="margin:10px 0 20px 22px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="ui tab" data-tab="tab-day">
+        <div class="grouped fields">
+            <div class="field" style="margin-top:0;padding-top:0.5em;">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioDay" value="1" checked="checked">
+                    <label>所有可能的值（<span>*</span>）</label>
+                </div>
+                <div bind-value="1" style="margin:10px 0 0 0;"></div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioDay" value="2">
+                    <label>不指定具体的值（<span>?</span>）</label>
+                </div>
+                <div bind-value="2" style="margin:10px 0 0 0;"></div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioDay" value="3">
+                    <label>在指定的日之间运行</label>
+                </div>
+                <div bind-value="3" style="line-height:38px;margin:10px 0 20px 22px;">
+                    <span style="margin:0 5px;">从</span>
+                    <input type="number" style="width:80px;" min="1" max="31" name="inputMinDay" value="1" placeholder="开始日">
+                    <span style="margin:0 5px;">---</span>
+                    <input type="number" style="width:80px;" min="2" max="31" name="inputMaxDay" value="2" placeholder="结束日">
+                    <span style="margin:0 5px;">日执行</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioDay" value="4">
+                    <label>在指定的日循环执行</label>
+                </div>
+                <div bind-value="4" style="line-height:38px;margin:10px 0 20px 22px;">
+                    <span style="margin:0 5px;">从</span>
+                    <input type="number" style="width:80px;" min="1" max="31" name="inputStartDay" value="1"
+                        placeholder="开始日">
+                    <span style="margin:0 5px;">日开始，每</span>
+                    <input type="number" style="width:80px;" min="1" max="31" name="inputEndDay" value="1" placeholder="结束日">
+                    <span style="margin:0 5px;">日执行一次</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioDay" value="5">
+                    <label>在指定日的最近工作日</label>
+                </div>
+                <div bind-value="4" style="line-height:38px;margin:10px 0 20px 22px;">
+                    <span style="margin:0 5px;">每月</span>
+                    <input type="number" style="width:80px;" min="1" max="31" name="inputJobDay" value="1" placeholder="工作日">
+                    <span style="margin:0 5px;">号最近的那个工作日</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioDay" value="6">
+                    <label>选择需要执行的日（注意平月、小月、大月之分）</label>
+                </div>
+                <div bind-value="6" style="margin:10px 0 20px 22px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="ui tab" data-tab="tab-month">
+        <div class="grouped fields">
+            <div class="field" style="margin-top:0;padding-top:0.5em;">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioMonth" value="1" checked="checked">
+                    <label>所有可能的值（<span>*</span>）</label>
+                </div>
+                <div bind-value="1" style="margin:10px 0 0 0;"></div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioMonth" value="2">
+                    <label>不指定具体的值（<span>?</span>）</label>
+                </div>
+                <div bind-value="2" style="margin:10px 0 0 0;"></div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioMonth" value="3">
+                    <label>在指定的月之间运行</label>
+                </div>
+                <div bind-value="3" style="line-height:38px;margin:10px 0 20px 22px;">
+                    <span style="margin:0 5px;">从</span>
+                    <input type="number" style="width:80px;" min="1" max="12" name="inputMinMonth" value="1"
+                        placeholder="开始月">
+                    <span style="margin:0 5px;">---</span>
+                    <input type="number" style="width:80px;" min="2" max="12" name="inputMaxMonth" value="2"
+                        placeholder="结束月">
+                    <span style="margin:0 5px;">月执行</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioMonth" value="4">
+                    <label>在指定的月循环执行</label>
+                </div>
+                <div bind-value="4" style="line-height:38px;margin:10px 0 20px 22px;">
+                    <span style="margin:0 5px;">从</span>
+                    <input type="number" style="width:80px;" min="1" max="12" name="inputStartMonth" value="1"
+                        placeholder="开始月">
+                    <span style="margin:0 5px;">月开始，每</span>
+                    <input type="number" style="width:80px;" min="1" max="12" name="inputEndMonth" value="1"
+                        placeholder="结束月">
+                    <span style="margin:0 5px;">月执行一次</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioMonth" value="5">
+                    <label>选择需要执行的月</label>
+                </div>
+                <div bind-value="5" style="margin:10px 0 20px 22px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="ui tab" data-tab="tab-week">
+        <div class="grouped fields">
+            <div class="field" style="margin-top:0;padding-top:0.5em;">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioWeek" value="1">
+                    <label>所有可能的值（<span>*</span>）</label>
+                </div>
+                <div bind-value="1" style="margin:10px 0 0 0;"></div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioWeek" value="2" checked="checked">
+                    <label>不指定具体的值（<span>?</span>）</label>
+                </div>
+                <div bind-value="2" style="margin:10px 0 0 0;"></div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioWeek" value="3">
+                    <label>在指定的星期之间运行</label>
+                </div>
+                <div bind-value="3" style="line-height:38px;margin:10px 0 20px 22px;">
+                    <span style="margin:0 5px;">从星期</span>
+                    <input type="number" style="width:80px;" min="1" max="7" name="inputMinWeek" value="1" placeholder="开始星期">
+                    <span style="margin:0 5px;">---星期</span>
+                    <input type="number" style="width:80px;" min="2" max="7" name="inputMaxWeek" value="2" placeholder="结束星期">
+                    <span style="margin:0 5px;">执行</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioWeek" value="4">
+                    <label>在指定周的星期执行</label>
+                </div>
+                <div bind-value="4" style="line-height:38px;margin:10px 0 20px 22px;">
+                    <span style="margin:0 5px;">第</span>
+                    <input type="number" style="width:80px;" min="1" max="4" name="inputStartWeek" value="1"
+                        placeholder="开始周">
+                    <span style="margin:0 5px;">周的星期</span>
+                    <input type="number" style="width:80px;" min="1" max="7" name="inputEndWeek" value="1" placeholder="结束星期">
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioWeek" value="5">
+                    <label>在本月最后个星期执行</label>
+                </div>
+                <div bind-value="5" style="line-height:38px;margin:10px 0 20px 22px;">
+                    <span style="margin:0 5px;">星期</span>
+                    <input type="number" style="width:80px;" min="1" max="7" name="inputLastWeek" value="1" placeholder="星期">
+                    <span style="margin:0 5px;">执行</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioWeek" value="6">
+                    <label>选择需要执行的星期（从星期日开始）</label>
+                </div>
+                <div bind-value="6" style="margin:10px 0 20px 22px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="ui tab" data-tab="tab-year">
+        <div class="grouped fields">
+            <div class="field" style="margin-top:0;padding-top:0.5em;">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioYear" value="1" checked="checked">
+                    <label>不指定具体的值</label>
+                </div>
+                <div bind-value="1" style="margin:10px 0 0 0;"></div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioYear" value="2">
+                    <label>每年</label>
+                </div>
+                <div bind-value="2" style="margin:10px 0 0 0;"></div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="radioYear" value="3">
+                    <label>在指定的年份之间运行</label>
+                </div>
+                <div bind-value="3" style="line-height:38px;margin:10px 0 20px 22px;">
+                    <span style="margin:0 5px;">从</span>
+                    <input type="number" style="width:80px;" min="2018" max="3000" name="inputMinYear" value="2018"
+                        placeholder="开始年">
+                    <span style="margin:0 5px;">---</span>
+                    <input type="number" style="width:80px;" min="2019" max="3000" name="inputMaxYear" value="2019"
+                        placeholder="结束年">
+                    <span style="margin:0 5px;">执行</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="field">
+    <table class="ui celled table">
+        <thead>
+            <tr>
+                <th style="width:150px;"></th>
+                <th>秒</th>
+                <th>分</th>
+                <th>时</th>
+                <th>日</th>
+                <th>月</th>
+                <th>周</th>
+                <th>年</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td><input type="text" name="inputExpSecond" value="*" bind-name="exp"></td>
+                <td><input type="text" name="inputExpMinute" value="*" bind-name="exp"></td>
+                <td><input type="text" name="inputExpHour" value="*" bind-name="exp"></td>
+                <td><input type="text" name="inputExpDay" value="*" bind-name="exp"></td>
+                <td><input type="text" name="inputExpMonth" value="*" bind-name="exp"></td>
+                <td><input type="text" name="inputExpWeek" value="?" bind-name="exp"></td>
+                <td><input type="text" name="inputExpYear"></td>
+            </tr>
+            <tr>
+                <td>Cron表达式</td>
+                <td colspan="7">
+                    <div class="ui action input">
+                        <input type="text" name="inputExpCron" style="word-spacing:20px;" bind-name="exp">
+                        <button class="ui button">恢复默认</button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>执行20次时间</td>
+                <td colspan="7" name="runResult"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

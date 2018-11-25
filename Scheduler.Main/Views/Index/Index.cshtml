@@ -1,0 +1,147 @@
+﻿@{
+ViewData["Title"] = "任务组列表";
+Layout = "_Layout";
+}
+<script src="/js/echarts.common.min.js"></script>
+<div class="row" style="margin-top:10px;padding:1rem;">
+    <div class="eight wide column">
+        <div class="ui icon message">
+            <i class="tasks icon"></i>
+            <div class="content">
+                <div class="header">总任务：@(ViewBag.EnableTask+ViewBag.DisableTask)</div>
+                <p>
+                    <span>审核通过的任务数量：</span>
+                    <span>@(ViewBag.EnableTask)</span>
+            </div>
+        </div>
+    </div>
+    <div class="eight wide column">
+        <div class="ui green icon message">
+            <i class="redo icon"></i>
+            <div class="content">
+                <div class="header">总Job：@ViewBag.TaskTotalCount</div>
+                <p>运行中的Job数量：@(ViewBag.TaskRunCount)</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" style="margin-top:10px;padding:1rem;">
+    <div class="eight wide column">
+        <div id="divResult" style="height:400px;width:100%;"></div>
+    </div>
+    <div class="eight wide column">
+        <div id="divRunTime" style="height:400px;width:100%;"></div>
+    </div>
+</div>
+<!--<div class="row" style="margin-top:10px;padding:1rem;">-->
+    <!--<div class="eight wide column">-->
+        <!--<div id="divRunDetail" style="height:400px;width:100%;"></div>-->
+    <!--</div>-->
+<!--</div>-->
+<script>
+    var nowDate = Tools.nowDateTime().substr(0, 10);
+    $(function () {
+        GetCharts();
+    });
+
+    function GetCharts() {
+        $.getJSON("/Index/GetChartList", function (rs) {
+            if (rs["code"] > 0) {
+                layer.msg(rs["msg"], {icon: 2});
+                return false;
+            }
+            var result = rs["data"];
+            var detailIds = [];
+            var detailName = [];
+            var okVal = 0;
+            var errVal = 0;
+            for (var i = 0; i < rs["data"].length; i++) {
+                var item = rs["data"][i];
+                if (parseInt(item["runStatus"]) == 1) {
+                    okVal++;
+                } else {
+                    errVal++;
+                }
+                if ($.inArray(item["taskId", detailIds]) < 0) {
+                    detailIds.push(item["taskId"]);
+                    detailName.push(item["name"]);
+                }
+            }
+            //var runDetailChart = echarts.init(document.getElementById("divRunDetail"));
+
+
+            var runResultChart = echarts.init(document.getElementById("divResult"));
+            runResultChart.setOption({
+                title: {
+                    text: '本月执行结果', subtext: '成功和失败比例', x: 'center'
+                },
+                tooltip: {
+                    trigger: 'item', formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical', left: 'left', data: ['成功', '失败']
+                },
+                series: [
+                    {
+                        name: '执行结果',
+                        type: 'pie',
+                        radius: '55%',
+                        center: ['50%', '60%'],
+                        data: [
+                            {value: okVal, name: '成功'},
+                            {value: errVal, name: '失败'},
+                        ],
+                        itemStyle: {
+                            emphasis: {shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)'}
+                        }
+                    }
+                ]
+            });
+            var runTimeChart = echarts.init(document.getElementById("divRunTime"));
+            runTimeChart.setOption({
+                title: {text: '本月每日运行耗时，单位：秒'},
+                tooltip: {trigger: 'axis'},
+                xAxis: {
+                    data: result.map(function (item) {
+                        return item["createdTime"].substr(0, 10);
+                    })
+                },
+                yAxis: {splitLine: {show: false}},
+                toolbox: {
+                    left: 'center',
+                    feature: {
+                        dataZoom: {yAxisIndex: 'none'},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                dataZoom: [{startValue: nowDate}, {type: 'inside'}],
+                visualMap: {
+                    top: 10,
+                    right: 10,
+                    pieces: [
+                        {gt: 0, lte: 0.5, color: '#096'},
+                        {gt: 0.5, lte: 1, color: '#ffde33'},
+                        {gt: 1, lte: 1.5, color: '#ff9933'},
+                        {gt: 1.5, lte: 2, color: '#cc0033'},
+                        {gt: 2, lte: 3, color: '#660099'},
+                        {gt: 3, color: '#7e0023'}
+                    ],
+                    outOfRange: {color: '#999'}
+                },
+                series: {
+                    name: "运行时间",
+                    type: 'line',
+                    data: result.map(function (item) {
+                        return item["runTime"];
+                    }),
+                    markLine: {
+                        silent: true,
+                        data: [{yAxis: 0.5}, {yAxis: 1}, {yAxis: 1.5}, {yAxis: 2}, {yAxis: 3}]
+                    }
+                }
+            });
+        });
+    }
+
+</script>

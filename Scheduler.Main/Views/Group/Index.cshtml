@@ -1,0 +1,99 @@
+﻿@{
+ViewData["Title"] = "任务组列表";
+Layout = "_Layout";
+}
+<div class="row">
+    <div style="margin-top:10px;" class="fifteen wide column">
+        <table class="ui selectable green striped celled table">
+            <thead>
+            <tr>
+                <th style="width: 75px;">ID</th>
+                <th>名称</th>
+                <th style="width: 100px;">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td></td>
+                <td>
+                    <div class="ui mini fluid input focus">
+                        <input type="text" placeholder="任务组名称" name="inputName" style="border:solid 1px #DEDEDE;">
+                    </div>
+                </td>
+                <td>
+                    <button class="ui green mini button" name="btnAdd"><i class="plus icon"></i>添加</button>
+                </td>
+            </tr>
+            @foreach(var item in ViewBag.GroupList){
+            <tr>
+                <td>@item.Id</td>
+                <td>
+                    <div class="ui mini fluid input focus">
+                        <input type="text" placeholder="任务组名称" name="inputName" value="@item.Name">
+                    </div>
+                </td>
+                <td>
+                    <div class="ui mini icon buttons" bind-id="@item.Id">
+                        <button title="更新" onclick="return edit(this);" class="ui green button"><i class="icon redo"></i></button>
+                        <div class="or"></div>
+                        <button title="删除" onclick="return del(this);" class="ui button"><i class="icon trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    $(function () {
+        $("button[name='btnAdd']").click(function () {
+            var name = $(this).closest("tr").find("input[name='inputName']").val();
+            if (Tools.isEmpty(name)) {
+                layer.msg("任务组名称不得为空", {icon: 2});
+                return false;
+            }
+            var loading = layer.load(1);
+            $.post("/Group/AddDo", {name: name}, function (data) {
+                layer.close(loading);
+                if (data["code"] > 0) {
+                    layer.msg(data["msg"], {icon: 2});
+                } else {
+                    window.location.reload();
+                }
+            });
+        });
+    });
+
+    function edit(obj) {
+        var id = $(obj).closest("div").attr("bind-id");
+        var name = $(obj).closest("tr").find("td:eq(1)>div>input").val();
+        if (Tools.isEmpty(name)) {
+            layer.msg("任务组名称不得为空", {icon: 2});
+            return false;
+        }
+        var loading = layer.load(1);
+        $.post("/Group/EditDo", {id: id, name: name}, function (data) {
+            layer.close(loading);
+            if (data["code"] > 0) {
+                layer.msg(data["msg"], {icon: 2});
+            } else {
+                window.location.reload();
+            }
+        });
+    }
+
+    function del(obj) {
+        var id = $(obj).closest("div").attr("bind-id");
+        layer.confirm("确认删除此项？", {icon: 3, title: '提示'}, function (index) {
+            layer.close(index);
+            $.post("/Group/DelDo", {id: id}, function (data) {
+                if (data["code"] > 0) {
+                    layer.msg(data["msg"], {icon: 2});
+                } else {
+                    window.location.reload();
+                }
+            });
+        });
+    }
+</script>

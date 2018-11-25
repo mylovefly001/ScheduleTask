@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width" />
+    <title>登录</title>
+    <link href="/lib/semantic/semantic.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/lib/semantic/semantic.min.js"></script>
+    <script src="/lib/layer/layer.js"></script>
+    <script src="/js/jquery.sha1.js"></script>
+    <script src="/js/tools.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        .grid {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="ui middle aligned center aligned grid">
+        <div class="eight wide column">
+            <div class="ui piled segment">
+                <h2 class="ui header">
+                    <img src="/img/logo.png" style="width: 35px; height: 35px;" alt="Logo" />
+                    <span style="color:#00C6F7;vertical-align:middle;font-size:32px;">任务调度系统</span>
+                </h2>
+                <hr style="border: none; height: 1px; background: #DEDEDE;" />
+                <form class="ui form" method="post">
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="user icon"></i>
+                            <input type="text" name="inputName" placeholder="用户名">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input type="password" name="inputPass" placeholder="密码">
+                        </div>
+                    </div>
+                    <input type="hidden" name="cmd" value="1">
+                    <div class="ui fluid blue submit button"><i class="sign-in icon"></i>&nbsp;&nbsp;登&nbsp;&nbsp;录</div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+    $(function () {
+        $(".ui.form").form({
+            fields: {
+                inputName: {
+                    identifier: "inputName",
+                    rules: [
+                        {
+                            type: "empty",
+                            prompt: "请输入用户名"
+                        }
+                    ]
+                },
+                inputPass: {
+                    identifier: "inputPass",
+                    rules: [
+                        {
+                            type: "empty",
+                            prompt: "请输入密码"
+                        }
+                    ]
+                }
+            },
+            onSuccess: function (event, fields) {
+                fields['inputPass'] = $.encoding.digests.hexSha1Str($("input[name='inputPass']").val());
+                $.post("/Login/Do", fields, function (data) {
+                    console.info(data);
+                    if (data['code'] > 0) {
+                        layer.msg(data["msg"], {icon: 2});
+                        return false;
+                    }
+                    window.location.href = "/";
+                });
+                return false;
+            }
+        });
+    });
+    </script>
+</body>
+
+</html>
