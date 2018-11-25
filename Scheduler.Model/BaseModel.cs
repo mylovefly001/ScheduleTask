@@ -16,7 +16,7 @@ namespace Scheduler.Model
 
         protected override void OnConfiguring(DbContextOptionsBuilder dbContext)
         {
-            dbContext.UseSqlite($"Data Source={Environment.CurrentDirectory}\\DataBase\\db.s3db");
+            dbContext.UseSqlite($"Data Source=db.s3db");
         }
     }
 }
