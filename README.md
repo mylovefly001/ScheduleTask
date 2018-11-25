@@ -32,6 +32,9 @@ dotnet Scheduler.Main.dll [Web管理界面运行端口] //默认5000端口
 ------------
 dotnet Scheduler.Main.dll 6000
 ```
+### 下载
+
+>https://github.com/mylovefly001/ScheduleTask/releases/tag/1.0
 
 ### WEB管理界面
 
