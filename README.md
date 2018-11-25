@@ -3,9 +3,10 @@
 
 ### 环境
 - .Net Core2.1+
+
 - Web管理界面需支持WebSocket浏览器
 
-	>安装.net core运行环境
+- 安装.net core运行环境
 
 	> https://www.microsoft.com/net/learn/dotnet/hello-world-tutorial#install
 
