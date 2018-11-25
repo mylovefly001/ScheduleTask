@@ -34,3 +34,5 @@ dotnet Scheduler.Main.dll 6000
 ```
 
 ### WEB管理界面
+
+>默认用户名：admin 密码：123
