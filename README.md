@@ -46,7 +46,7 @@ dotnet Scheduler.Main.dll 6000
 ```
 ### 下载
 
->https://gitee.com/otman/scheduler/releases
+>https://github.com/mylovefly001/ScheduleTask/releases
 
 ### WEB管理界面
 
